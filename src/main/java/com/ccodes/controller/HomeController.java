@@ -1,0 +1,77 @@
+package com.ccodes.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ccodes.dao.UserDao;
+import com.ccodes.entity.User;
+
+@Controller
+public class HomeController {
+	@Autowired
+	private UserDao userDao;
+
+	@RequestMapping("/home")
+	public String home() {
+		return "home";
+	}
+
+	@RequestMapping("/login")
+	public String login() {
+		return "login";
+	}
+
+	@RequestMapping("/register")
+	public String register() {
+		return "register";
+	}
+	/*  @RequestMapping("/addNotes")
+	public String addnote() {
+		return "add_notes";
+	}
+
+	@RequestMapping("/viewNotes")
+	public String viewnotes() {
+		return "view_notes";
+	}
+	@RequestMapping("/editNotes")
+	public String editnotes() {
+		return "edit_notes";
+	}
+	*/
+	
+	@RequestMapping(path="/registerUser", method=RequestMethod.POST)
+	public String registerUser(@ModelAttribute User user, HttpSession session) {
+		 if (userDao.existsByEmail(user.getEmail())) {
+	            session.setAttribute("msg", "Email already in use. Please use a different email.");
+	            return "redirect:/register";
+	        }
+		
+		//System.out.println(user);
+		
+		userDao.saveUser(user);
+		session.setAttribute("msg","Register sucessfully");
+		return "redirect:/register";
+	}
+	
+	@RequestMapping(path="/loginUser", method=RequestMethod.POST)
+	public String loginUser(@RequestParam("email") String email,@RequestParam("password") String password,HttpSession session) {
+		User user=userDao.login(email, password);
+		if(user!=null)
+		{
+			session.setAttribute("userObj", user);
+			return"home"	;
+		}else {
+			session.setAttribute("msg","email & password invalid");
+			return"redirect:/login";
+		}
+		
+		
+	}
+}
