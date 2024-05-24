@@ -1,9 +1,4 @@
 # Enotes
-Got it, here's the README with the removed sections:
-
----
-
-# Enotes
 
 This is a Maven-based project that demonstrates a simple Notes Management application using Spring MVC and Hibernate. The application allows users to create, read, update, and delete (CRUD) notes. It also includes features such as keyword search, speech-to-text input for notes, unique email validation for users, and an authentication handler to restrict access to registered users only.
 
