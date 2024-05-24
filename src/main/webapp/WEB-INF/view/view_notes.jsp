@@ -23,12 +23,21 @@
 <body>
     <%@include file="/WEB-INF/resources/component/navbar.jsp"%>
     <div class="container-fluid p-2">
-        <h4 class="text-center">View All Notes</h4>
+       <!--<h4 class="text-center">View All Notes</h4>--> 
         
         <c:if test="${not empty msg}">
             <p class="fs-5 fw-bold text-success text-center">${msg}</p>
             <c:remove var="msg" />
         </c:if>
+        
+          <!-- Search Form -->
+        <form action="viewNotes" method="get" class="mb-3">
+            <div class="input-group">
+               <input type="text" name="search" class="form-control" style="width: 100px; height: 40px;" placeholder="Search notes..." value="${param.search}">
+               
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+        </form>
         <div class="row">
             <c:forEach items="${list}" var="n">
                 <div class="col-md-10 offset-md-1 mt-2">

@@ -23,6 +23,7 @@ public class UserDaoImpl implements UserDao {
 		int i = (Integer) hibernateTemplate.save(user);
 		return i;
 	}
+
 	@Override
 	public User login(String email, String password) {
 		String hql = "from User where email=:em and password=:pwd";
@@ -42,44 +43,17 @@ public class UserDaoImpl implements UserDao {
 		return i;
 	}
 
-	/*	
 	@Override
 	public List<Notes> getNotesByUser(User user) {
-	    String hql = "from Notes where user=:us";
-	    List<Notes> list = hibernateTemplate.execute(s -> {
-	        Query<Notes> q = s.createQuery(hql); // Specify the generic type <Notes> for Query
-	        q.setParameter("us", user); // Use setParameter instead of setEntity
-	        return q.getResultList();
-	    });
-	    return list;
-	} */
-	
-	
-	 @Override
-public List<Notes> getNotesByUser(User user) {
-    String hql = "from Notes where user=:us";
-    List<Notes> list = hibernateTemplate.execute(s -> {
-        Query<Notes> q = s.createQuery(hql, Notes.class); // Specify the generic type <Notes> for Query
-        q.setParameter("us", user);
-        return q.getResultList();
-    });
-    return list;
-}
- 
-
- /* @Override
-	public List<Notes> getNotesByUser(User user) {
-		String sql = "from Notes where user=:us";
+		String hql = "from Notes where user=:us";
 		List<Notes> list = hibernateTemplate.execute(s -> {
-			Query q = s.createQuery(sql);
-			q.setEntity("us", user);
+			Query<Notes> q = s.createQuery(hql, Notes.class); // Specify the generic type <Notes> for Query
+			q.setParameter("us", user);
 			return q.getResultList();
 		});
 		return list;
-	}     
-   
-    */
-    
+	}
+
 	@Override
 	public Notes getNotesById(int id) {
 		Notes n = hibernateTemplate.get(Notes.class, id);
@@ -94,30 +68,44 @@ public List<Notes> getNotesByUser(User user) {
 
 	@Override
 	public void updateNotes(Notes n) {
-hibernateTemplate.update(n);
+		hibernateTemplate.update(n);
 	}
+
 	@Override
 	public boolean existsByEmail(String email) {
-		 String hql = "select count(1) from User where email=:em";
-	        Long count = hibernateTemplate.execute(session -> {
-	            Query<Long> query = session.createQuery(hql, Long.class);
-	            query.setParameter("em", email);
-	            return query.uniqueResult();
-	        });
-	        return count > 0;
-	    }
+		String hql = "select count(1) from User where email=:em";
+		Long count = hibernateTemplate.execute(session -> {
+			Query<Long> query = session.createQuery(hql, Long.class);
+			query.setParameter("em", email);
+			return query.uniqueResult();
+		});
+		return count > 0;
 	}
 
-// @Override
-// public User login(String email, String password) {
-// String sql="from User where email=:em and password=:pwd";
-// User user=(User)hibernateTemplate.execute(s->{
-//Query q=s.createQuery(sql);
-//q.setString("em",email);
-//q.setString("pwd",password);
+//	@Override
+//	public List<Notes> searchNotesByUser(User user, String keyword) {
+//		String hql = "from Notes where user=:us and (title like :kw or content like :kw)";
+//		List<Notes> list = hibernateTemplate.execute(s -> {
+	// Query<Notes> q = s.createQuery(hql, Notes.class);
+	// q.setParameter("us", user);
+	// q.setParameter("kw", "%" + keyword + "%");
+	// List<Notes> results = q.getResultList();
+	// System.out.println("Search results: " + results); // Debug statement
+	// return results;
+//		});
+//		return list;
+//	}  
 
-//return q.uniqueResult();
-// });
+	@Override
+	public List<Notes> searchNotesByUser(User user, String keyword) {
+		String hql = "from Notes where user=:us and (title like :kw or description like :kw)";
+		List<Notes> list = hibernateTemplate.execute(s -> {
+			Query<Notes> q = s.createQuery(hql, Notes.class);
+			q.setParameter("us", user);
+			q.setParameter("kw", "%" + keyword + "%");
+			return q.getResultList();
+		});
+		return list;
+	}
 
-// return user;
-//}
+}

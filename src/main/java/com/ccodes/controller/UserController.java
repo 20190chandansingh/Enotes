@@ -33,13 +33,20 @@ public class UserController {
 	}
 
 	@RequestMapping("/viewNotes")
-	public String viewnotes(HttpSession session, Model m) {
-		User us = (User) session.getAttribute("userObj");
-		List<Notes> notes = userDao.getNotesByUser(us);
-		m.addAttribute("list", notes);
-		return "view_notes";
+	public String viewnotes(HttpSession session, Model m, @RequestParam(value = "search", required = false) String search) {
+	    User us = (User) session.getAttribute("userObj");
+	    List<Notes> notes;
+	    
+	    if (search != null && !search.trim().isEmpty()) {
+	        notes = userDao.searchNotesByUser(us, search);
+	    } else {
+	        notes = userDao.getNotesByUser(us);
+	    }
+	    
+	    m.addAttribute("list", notes);
+	    return "view_notes";
 	}
-	
+
 	
 	@RequestMapping("/viewNoteDetails")
 	public String viewNoteDetails(@RequestParam("id") int id, Model model) {
